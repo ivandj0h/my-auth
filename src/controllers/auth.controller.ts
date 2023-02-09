@@ -10,7 +10,7 @@ export const excludedFields = ['password'];
 // Cookie options
 const accessTokenCookieOptions: CookieOptions = {
   expires: new Date(
-    Date.now() + config.get<number>('accessTokenExpiresIn') * 60 * 1000
+      Date.now() + config.get<number>('accessTokenExpiresIn') * 60 * 1000
   ),
   maxAge: config.get<number>('accessTokenExpiresIn') * 60 * 1000,
   httpOnly: true,
@@ -22,9 +22,9 @@ if (process.env.NODE_ENV === 'production')
   accessTokenCookieOptions.secure = true;
 
 export const registerHandler = async (
-  req: Request<{}, {}, CreateUserInput>,
-  res: Response,
-  next: NextFunction
+    req: Request<{}, {}, CreateUserInput>,
+    res: Response,
+    next: NextFunction
 ) => {
   try {
     const user = await createUser({
@@ -51,9 +51,9 @@ export const registerHandler = async (
 };
 
 export const loginHandler = async (
-  req: Request<{}, {}, LoginUserInput>,
-  res: Response,
-  next: NextFunction
+    req: Request<{}, {}, LoginUserInput>,
+    res: Response,
+    next: NextFunction
 ) => {
   try {
     // Get the user from the collection
@@ -61,17 +61,17 @@ export const loginHandler = async (
 
     // Check if user exist and password is correct
     if (
-      !user ||
-      !(await user.comparePasswords(user.password, req.body.password))
+        !user ||
+        !(await user.comparePasswords(user.password, req.body.password))
     ) {
       return next(new AppError('Invalid email or password', 401));
     }
 
     // Create an Access Token
-    const { accessToken } = await signToken(user);
+    const { access_token } = await signToken(user);
 
     // Send Access Token in Cookie
-    res.cookie('accessToken', accessToken, accessTokenCookieOptions);
+    res.cookie('access_token', access_token, accessTokenCookieOptions);
     res.cookie('logged_in', true, {
       ...accessTokenCookieOptions,
       httpOnly: false,
@@ -80,7 +80,7 @@ export const loginHandler = async (
     // Send Access Token
     res.status(200).json({
       status: 'success',
-      accessToken,
+      access_token,
     });
   } catch (err: any) {
     next(err);
